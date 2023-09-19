@@ -1,0 +1,5 @@
+winget install -e --id SlackTechnologies.Slack 9WZDNCRFJ364 OpenVPNTechnologies.OpenVPNConnect Fortinet.FortiClientVPN AnyDeskSoftwareGmbH.AnyDesk 9PNKDR50694P XPDCFJDKLZJLP8 DEVCOM.JMeter Git.Git
+
+9WZDNCRFJ364 : Skype
+9PNKDR50694P: DBeaver
+XPDCFJDKLZJLP8 : Visual Studio Community 2022
