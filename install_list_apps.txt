@@ -1,5 +1,4 @@
-winget install -e --id SlackTechnologies.Slack 9WZDNCRFJ364 OpenVPNTechnologies.OpenVPNConnect Fortinet.FortiClientVPN AnyDeskSoftwareGmbH.AnyDesk 9PNKDR50694P XPDCFJDKLZJLP8 DEVCOM.JMeter RARLab.WinRAR
-
-9WZDNCRFJ364 : Skype
-9PNKDR50694P: DBeaver
-XPDCFJDKLZJLP8 : Visual Studio Community 2022
+winget install --id OpenVPNTechnologies.OpenVPNConnect Fortinet.FortiClientVPN AnyDeskSoftwareGmbH.AnyDesk  XPDCFJDKLZJLP8 DEVCOM.JMeter RARLab.WinRAR
+winget install --id SlackTechnologies.Slack
+winget install --id 9PNKDR50694P
+winget install --id XPDCFJDKLZJLP8
