@@ -1,0 +1,4 @@
+winget install --id RARLab.WinRAR
+winget install --id CoreyButler.NVMforWindows
+winget install --id XPDCFJDKLZJLP8
+winget install --id Microsoft.SQLServer.2019.Developer
