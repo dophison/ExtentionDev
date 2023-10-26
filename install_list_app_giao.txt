@@ -1,0 +1,7 @@
+winget install --id RARLab.WinRAR
+winget install --id Git.Git
+winget install --id SlackTechnologies.Slack
+winget install --id OpenVPNTechnologies.OpenVPN
+winget install --id BandicamCompany.Bandicam
+winget install --id Google.Chrome
+winget install --id Microsoft.SQLServerManagementStudio
