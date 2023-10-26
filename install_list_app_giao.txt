@@ -5,3 +5,4 @@ winget install --id OpenVPNTechnologies.OpenVPN
 winget install --id BandicamCompany.Bandicam
 winget install --id Google.Chrome
 winget install --id Microsoft.SQLServerManagementStudio
+winget install --id Postman.Postman
