@@ -1,0 +1,5 @@
+winget install --id RARLab.WinRAR
+winget install --id Git.Git
+winget install --id SlackTechnologies.Slack
+winget install --id OpenVPNTechnologies.OpenVPN
+winget install --id VNGCorp.Zalo
