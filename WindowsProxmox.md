@@ -68,6 +68,16 @@ Set-Content "$env:APPDATA\Microsoft\Windows\PowerShell\PSReadLine\ConsoleHost_hi
 
 Cloudbase-init
 
+Cài đặt 
+```
+$Installer = $env:TEMP + "\CloudbaseInitSetup.msi";
+Invoke-WebRequest -UseBasicParsing https://cloudbase.it/downloads/CloudbaseInitSetup_Stable_x64.msi -OutFile $Installer;
+
+Start-Process msiexec -ArgumentList "/i $Installer /qn /l*v log.txt /passive" -Wait
+
+Remove-Item $Installer;
+```
+
 
 cloudbase-init.cfg
 
@@ -184,3 +194,4 @@ winget install --id CoreyButler.NVMforWindows
 winget install --id XPDCFJDKLZJLP8
 
 winget install --id Microsoft.VisualStudioCode
+
