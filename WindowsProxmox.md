@@ -74,6 +74,12 @@ Dism.exe /online /Cleanup-Image /StartComponentCleanup /ResetBase
 Cloudbase-init
 
 Cài đặt 
+
+Download link: 
+```
+https://cloudbase.it/downloads/CloudbaseInitSetup_Stable_x64.msi
+```
+
 ```
 $Installer = $env:TEMP + "\CloudbaseInitSetup.msi";
 Invoke-WebRequest -UseBasicParsing https://cloudbase.it/downloads/CloudbaseInitSetup_Stable_x64.msi -OutFile $Installer;
@@ -207,6 +213,7 @@ winget install --id CoreyButler.NVMforWindows
 winget install --id XPDCFJDKLZJLP8
 
 winget install --id Microsoft.VisualStudioCode
+
 
 
 
