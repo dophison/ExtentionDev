@@ -190,6 +190,43 @@ Unattend.xml (Chỉ sửa lại file này nếu là Windows 7,8,10, Windows Ser
 </unattend>
 ```
 
+- Disabel windows Update
+
+```
+ reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsUpdate\Auto Update" /v AUOptions /t REG_DWORD /d 0 /f
+ sc config wuauserv start= disabled
+ net stop wuauserv
+ 
+ @echo off
+
+netsh advfirewall firewall add rule name="Block Windows Update" dir=out program="C:\Windows\System32\svchost.exe" remoteport=80,443 protocol=TCP action=block
+
+net session >nul 2>&1
+if %errorlevel% neq 0 (
+    echo Run this script as Administrator.
+    pause
+    exit
+)
+
+set HOSTSFILE=%SystemRoot%\System32\drivers\etc\hosts
+attrib -r "%HOSTSFILE%"
+
+powershell -Command ^
+  "Add-Content -Path '%HOSTSFILE%' -Value '127.0.0.1 windowsupdate.microsoft.com';" ^
+  "Add-Content -Path '%HOSTSFILE%' -Value '127.0.0.1 download.windowsupdate.com';" ^
+  "Add-Content -Path '%HOSTSFILE%' -Value '127.0.0.1 *.windowsupdate.microsoft.com';" ^
+  "Add-Content -Path '%HOSTSFILE%' -Value '127.0.0.1 *.update.microsoft.com';" ^
+  "Add-Content -Path '%HOSTSFILE%' -Value '127.0.0.1 *.windowsupdate.com';" ^
+  "Add-Content -Path '%HOSTSFILE%' -Value '127.0.0.1 *.download.windowsupdate.com';" ^
+  "Add-Content -Path '%HOSTSFILE%' -Value '127.0.0.1 download.windowsupdate.com';" ^
+  "Add-Content -Path '%HOSTSFILE%' -Value '127.0.0.1 download.microsoft.com';" ^
+  "Add-Content -Path '%HOSTSFILE%' -Value '127.0.0.1 wustat.windows.com';" ^
+  "Add-Content -Path '%HOSTSFILE%' -Value '127.0.0.1 ntservicepack.microsoft.com';" ^
+  "Add-Content -Path '%HOSTSFILE%' -Value '127.0.0.1 go.microsoft.com';" ^
+  "Add-Content -Path '%HOSTSFILE%' -Value '127.0.0.1 dl.delivery.mp.microsoft.com';" ^
+  "Add-Content -Path '%HOSTSFILE%' -Value '127.0.0.1 *.delivery.mp.microsoft.com';"
+ ```
+
 
 
 - Xoá lịch sử PowerShell (Clear-History)
@@ -201,6 +238,8 @@ Hoặc
 ```
 doskey /listsize=0
 ```
+
+
 
 
 
@@ -216,6 +255,7 @@ winget install --id CoreyButler.NVMforWindows
 winget install --id XPDCFJDKLZJLP8
 
 winget install --id Microsoft.VisualStudioCode
+
 
 
 
