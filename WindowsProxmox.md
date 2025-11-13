@@ -197,7 +197,10 @@ Unattend.xml (Chỉ sửa lại file này nếu là Windows 7,8,10, Windows Ser
 Set-Content "$env:APPDATA\Microsoft\Windows\PowerShell\PSReadLine\ConsoleHost_history.txt" ""
 ```
 
-
+Hoặc
+```
+doskey /listsize=0
+```
 
 
 
@@ -213,6 +216,7 @@ winget install --id CoreyButler.NVMforWindows
 winget install --id XPDCFJDKLZJLP8
 
 winget install --id Microsoft.VisualStudioCode
+
 
 
 
