@@ -1,6 +1,8 @@
 
 
-
+```
+Get-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services'
+```
 
 ```
 Get-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services' -Name fSingleSessionPerUser -ErrorAction SilentlyContinue
@@ -194,4 +196,5 @@ winget install --id CoreyButler.NVMforWindows
 winget install --id XPDCFJDKLZJLP8
 
 winget install --id Microsoft.VisualStudioCode
+
 
