@@ -1,5 +1,13 @@
 
 
+
+Xuất feature/role của windows
+
+```
+Get-WindowsFeature | Where-Object { $_.Installed -eq $True } | Sort-Object Name | Format-Table Name, DisplayName, Installed -AutoSize
+```
+
+
 ```
 Get-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services'
 ```
@@ -196,5 +204,6 @@ winget install --id CoreyButler.NVMforWindows
 winget install --id XPDCFJDKLZJLP8
 
 winget install --id Microsoft.VisualStudioCode
+
 
 
