@@ -71,11 +71,6 @@ Dism.exe /online /Cleanup-Image /StartComponentCleanup /ResetBase
 ```
 
 
-- Xoá lịch sử PowerShell (Clear-History)
-```
-Set-Content "$env:APPDATA\Microsoft\Windows\PowerShell\PSReadLine\ConsoleHost_history.txt" ""
-```
-
 Cloudbase-init
 
 Cài đặt 
@@ -191,6 +186,14 @@ Unattend.xml (Chỉ sửa lại file này nếu là Windows 7,8,10, Windows Ser
 
 
 
+- Xoá lịch sử PowerShell (Clear-History)
+```
+Set-Content "$env:APPDATA\Microsoft\Windows\PowerShell\PSReadLine\ConsoleHost_history.txt" ""
+```
+
+
+
+
 
 Chạy sysprep.exe
 ```
@@ -204,6 +207,7 @@ winget install --id CoreyButler.NVMforWindows
 winget install --id XPDCFJDKLZJLP8
 
 winget install --id Microsoft.VisualStudioCode
+
 
 
 
