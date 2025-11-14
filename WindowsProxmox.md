@@ -1,11 +1,18 @@
 
 
 
-Xuất feature/role của windows
+Xuất feature/role của windows server
 
 ```
 Get-WindowsFeature | Where-Object { $_.Installed -eq $True } | Sort-Object Name | Format-Table Name, DisplayName, Installed -AutoSize
 ```
+
+
+Xuất feature/role của windows 10/11
+```
+Get-WindowsOptionalFeature -Online | Where-Object { $_.State -eq 'Enabled' } | Select-Object FeatureName, State
+```
+
 
 
 ```
@@ -277,6 +284,7 @@ winget install --id CoreyButler.NVMforWindows
 winget install --id XPDCFJDKLZJLP8
 
 winget install --id Microsoft.VisualStudioCode
+
 
 
 
