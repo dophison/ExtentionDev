@@ -94,13 +94,13 @@ cloudbase-init.cfg
 
 ```
 [DEFAULT]
-username=administrator
+username=Administrator
 groups=Administrators
 inject_user_password=true
 first_logon_behaviour=no
-config_drive_raw_hhd=true
-config_drive_cdrom=true
-config_drive_vfat=true
+raw_hhd=true
+cdrom=true
+vfat=true
 bsdtar_path=C:\Program Files\Cloudbase Solutions\Cloudbase-Init\bin\bsdtar.exe
 mtools_path=C:\Program Files\Cloudbase Solutions\Cloudbase-Init\bin\
 locations=cdrom
@@ -114,22 +114,21 @@ mtu_use_dhcp_config=false
 ntp_use_dhcp_config=false
 local_scripts_path=C:\Program Files\Cloudbase Solutions\Cloudbase-Init\LocalScripts\
 metadata_services=cloudbaseinit.metadata.services.configdrive.ConfigDriveService
-plugins=cloudbaseinit.plugins.common.networkconfig.NetworkConfigPlugin,cloudbaseinit.plugins.common.mtu.MTUPlugin,cloudbaseinit.plugins.common.sethostname.SetHostNamePlugin,cloudbaseinit.plugins.windows.extendvolumes.ExtendVolumesPlugin,cloudbaseinit.plugins.common.sshpublickeys.SetUserSSHPublicKeysPlugin,cloudbaseinit.plugins.common.setuserpassword.SetUserPasswordPlugin,cloudbaseinit.plugins.windows.createuser.CreateUserPlugin,cloudbaseinit.plugins.common.userdata.UserDataPlugin
+plugins=cloudbaseinit.plugins.common.networkconfig.NetworkConfigPlugin,cloudbaseinit.plugins.common.mtu.MTUPlugin,cloudbaseinit.plugins.common.sethostname.SetHostNamePlugin,cloudbaseinit.plugins.windows.extendvolumes.ExtendVolumesPlugin,cloudbaseinit.plugins.common.sshpublickeys.SetUserSSHPublicKeysPlugin,cloudbaseinit.plugins.common.setuserpassword.SetUserPasswordPlugin,cloudbaseinit.plugins.common.userdata.UserDataPlugin
 check_latest_version=true
-
 ```
 
 
 cloudbase-init-unattend.cfg
 ```
 [DEFAULT]
-username=administrator
+username=Administrator
 groups=Administrators
 inject_user_password=true
 first_logon_behaviour=no
-config_drive_raw_hhd=true
-config_drive_cdrom=true
-config_drive_vfat=true
+raw_hhd=true
+cdrom=true
+vfat=true
 bsdtar_path=C:\Program Files\Cloudbase Solutions\Cloudbase-Init\bin\bsdtar.exe
 mtools_path=C:\Program Files\Cloudbase Solutions\Cloudbase-Init\bin\
 locations=cdrom
@@ -144,8 +143,8 @@ ntp_use_dhcp_config=false
 local_scripts_path=C:\Program Files\Cloudbase Solutions\Cloudbase-Init\LocalScripts\
 check_latest_version=false
 metadata_services=cloudbaseinit.metadata.services.configdrive.ConfigDriveService
-plugins=cloudbaseinit.plugins.common.networkconfig.NetworkConfigPlugin,cloudbaseinit.plugins.common.mtu.MTUPlugin,cloudbaseinit.plugins.common.sethostname.SetHostNamePlugin,cloudbaseinit.plugins.windows.extendvolumes.ExtendVolumesPlugin,cloudbaseinit.plugins.common.sshpublickeys.SetUserSSHPublicKeysPlugin,cloudbaseinit.plugins.common.setuserpassword.SetUserPasswordPlugin,cloudbaseinit.plugins.windows.createuser.CreateUserPlugin,cloudbaseinit.plugins.common.userdata.UserDataPlugin
-allow_reboot=false
+plugins=cloudbaseinit.plugins.common.networkconfig.NetworkConfigPlugin,cloudbaseinit.plugins.common.mtu.MTUPlugin,cloudbaseinit.plugins.common.sethostname.SetHostNamePlugin,cloudbaseinit.plugins.windows.extendvolumes.ExtendVolumesPlugin,cloudbaseinit.plugins.common.sshpublickeys.SetUserSSHPublicKeysPlugin,cloudbaseinit.plugins.common.setuserpassword.SetUserPasswordPlugin,cloudbaseinit.plugins.common.userdata.UserDataPlugin
+allow_reboot=true
 stop_service_on_exit=false
 ```
 
@@ -190,7 +189,16 @@ Unattend.xml (Chỉ sửa lại file này nếu là Windows 7,8,10, Windows Ser
 </unattend>
 ```
 
-- Disabel windows Update
+- Disable windows Update
+
+ Dọn Windows update cache
+
+```
+Remove-Item 'C:\Windows\SoftwareDistribution\Download' -Recurse -Force
+New-Item -Path "C:\Windows\SoftwareDistribution\" -Name "Download" -ItemType "directory"
+```
+
+Tạo file .bat để thực thi
 
 ```
  reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsUpdate\Auto Update" /v AUOptions /t REG_DWORD /d 0 /f
@@ -227,6 +235,23 @@ powershell -Command ^
   "Add-Content -Path '%HOSTSFILE%' -Value '127.0.0.1 *.delivery.mp.microsoft.com';"
  ```
 
+Tắt NLA
+```
+$rdp = Get-WmiObject -class "Win32_TSGeneralSetting" -Namespace root\cimv2\terminalservices -Filter "TerminalName='RDP-tcp'"
+$rdp.SetUserAuthenticationRequired(0)
+```
+
+Định nghĩa lại pagefile
+
+```
+$sys = Get-WmiObject Win32_Computersystem -EnableAllPrivileges
+$sys.AutomaticManagedPagefile = $false
+$sys.Put()
+$Pagefile = Get-WmiObject -Class Win32_PagefileSetting | Where-Object {$_.Name -eq "C:\pagefile.sys"}
+$Pagefile.InitialSize = 512
+$Pagefile.MaximumSize = 1024
+$Pagefile.Put()
+```
 
 
 - Xoá lịch sử PowerShell (Clear-History)
@@ -238,9 +263,6 @@ Hoặc
 ```
 doskey /listsize=0
 ```
-
-
-
 
 
 Chạy sysprep.exe
@@ -255,6 +277,7 @@ winget install --id CoreyButler.NVMforWindows
 winget install --id XPDCFJDKLZJLP8
 
 winget install --id Microsoft.VisualStudioCode
+
 
 
 
