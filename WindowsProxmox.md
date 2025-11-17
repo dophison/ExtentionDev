@@ -272,6 +272,12 @@ doskey /listsize=0
 ```
 
 
+- Xóa event log 
+
+```
+Clear-EventLog -LogName Application, Security, System
+```
+
 Chạy sysprep.exe
 ```
 c:\windows\system32\sysprep\sysprep.exe /shutdown /generalize /oobe /unattend:"C:\Program Files\Cloudbase Solutions\Cloudbase-Init\conf\Unattend.xml"
@@ -284,6 +290,7 @@ winget install --id CoreyButler.NVMforWindows
 winget install --id XPDCFJDKLZJLP8
 
 winget install --id Microsoft.VisualStudioCode
+
 
 
 
