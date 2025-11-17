@@ -275,8 +275,10 @@ doskey /listsize=0
 - Xóa event log 
 
 ```
-Clear-EventLog -LogName Application, Security, System
+Clear-EventLog -LogName Application, System -Confirm
+wevtutil cl "Microsoft-Windows-TerminalServices-LocalSessionManager/Operational"
 ```
+
 
 Chạy sysprep.exe
 ```
@@ -290,6 +292,7 @@ winget install --id CoreyButler.NVMforWindows
 winget install --id XPDCFJDKLZJLP8
 
 winget install --id Microsoft.VisualStudioCode
+
 
 
 
