@@ -365,6 +365,21 @@ $Pagefile.Put()
 ```
 
 
+
+- Xóa event log 
+
+```
+Clear-EventLog -LogName Application, System -Confirm
+wevtutil cl "Microsoft-Windows-TerminalServices-LocalSessionManager/Operational"
+```
+- Xóa log cloud-init
+
+```
+Clear-Content -Path "C:\Program Files\Cloudbase Solutions\Cloudbase-Init\log\cloudbase-init.log"
+```
+Còn 1 file nữa gặp điền vào.
+
+
 - Xoá lịch sử PowerShell (Clear-History)
 ```
 Set-Content "$env:APPDATA\Microsoft\Windows\PowerShell\PSReadLine\ConsoleHost_history.txt" ""
@@ -376,18 +391,14 @@ doskey /listsize=0
 ```
 
 
-- Xóa event log 
-
-```
-Clear-EventLog -LogName Application, System -Confirm
-wevtutil cl "Microsoft-Windows-TerminalServices-LocalSessionManager/Operational"
-```
 
 
 Chạy sysprep.exe
 ```
 c:\windows\system32\sysprep\sysprep.exe /shutdown /generalize /oobe /unattend:"C:\Program Files\Cloudbase Solutions\Cloudbase-Init\conf\Unattend.xml"
 ```
+
+
 
 
 
@@ -416,6 +427,7 @@ Win2012 bỏ option udfver102
 ```
 .\oscdimg.exe -bootdata:2#p0,e,bC:\win2025\boot\etfsboot.com#pEF,e,bC:\win2025\efi\microsoft\boot\efisys.bin -m -o -u2 C:\win2025 C:\windows-server-2025-Datacenter-x64-251106.iso
 ```
+
 
 
 
