@@ -208,24 +208,60 @@ New-Item -Path "C:\Windows\SoftwareDistribution\" -Name "Download" -ItemType "di
 Tạo file .bat để thực thi
 
 ```
- reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsUpdate\Auto Update" /v AUOptions /t REG_DWORD /d 0 /f
- sc config wuauserv start= disabled
- net stop wuauserv
- 
- @echo off
+@echo off
+cls
 
-netsh advfirewall firewall add rule name="Block Windows Update" dir=out program="C:\Windows\System32\svchost.exe" remoteport=80,443 protocol=TCP action=block
+echo.
+echo =================================================================
+echo        BAT DAU CHAN CAP NHAT WINDOWS VA DELIVERY OPTIMIZATION
+echo =================================================================
 
-net session >nul 2>&1
-if %errorlevel% neq 0 (
-    echo Run this script as Administrator.
-    pause
-    exit
-)
+:: 1. CHAN FIREWALL BANG CAC RULE CU THE
+echo.
+echo === 1. Tao cac quy tac Firewall de chan ket noi ra ngoai ===
+
+echo Tao quy tac chan TCP Port 80, 443 cho svchost.exe...
+netsh advfirewall firewall add rule name="Block WU TCP 80_443" dir=out program="C:\Windows\System32\svchost.exe" remoteport=80,443 protocol=TCP action=block
+
+echo Tao quy tac chan UDP Port 443 (QUIC) cho svchost.exe...
+netsh advfirewall firewall add rule name="Block WU UDP 443" dir=out program="C:\Windows\System32\svchost.exe" remoteport=443 protocol=UDP action=block
+
+echo Tao quy tac chan TCP Port 7680 (Delivery Optimization) cho svchost.exe...
+netsh advfirewall firewall add rule name="Block Delivery Optimization TCP 7680" dir=out program="C:\Windows\System32\svchost.exe" remoteport=7680 protocol=TCP action=block
+
+echo Da tao cac quy tac chan ket noi thanh cong.
+
+:: 2. VO HIEU HOA CUNG CAC DICH VU CAP NHAT
+echo.
+echo === 2. Vo hieu hoa cung dich vu Windows Update va Delivery Optimization ===
+
+echo Dang dung dich vu wuauserv...
+sc stop wuauserv >nul 2>&1
+
+echo Vo hieu hoa kiem tra update tu dong bang Registry (AUOptions=0)...
+reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsUpdate\Auto Update" /v AUOptions /t REG_DWORD /d 0 /f
+
+echo Dang dung dich vu DoSvc...
+sc stop DoSvc >nul 2>&1
+echo Vo hieu hoa cung DoSvc bang cach dat Start=4 (Disabled) trong Registry...
+REG ADD "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\DoSvc" /v Start /t REG_DWORD /d 4 /f
+
+echo Dang dung dich vu UsoSvc...
+sc stop UsoSvc >nul 2>&1
+echo Vo hieu hoa cung UsoSvc bang cach dat Start=4 (Disabled) trong Registry...
+REG ADD "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\UsoSvc" /v Start /t REG_DWORD /d 4 /f
+
+echo Cac dich vu cap nhat da bi vo hieu hoa.
+
+:: 3. CHAN BANG TEP HOSTS
+echo.
+echo === 3. Chan cac ten mien cap nhat bang cach them vao Hosts File ===
 
 set HOSTSFILE=%SystemRoot%\System32\drivers\etc\hosts
+echo Xoa thuoc tinh Read-Only (attrib -r) cua Hosts File...
 attrib -r "%HOSTSFILE%"
 
+echo Dang them cac ten mien Microsoft Update vao Hosts File...
 powershell -Command ^
   "Add-Content -Path '%HOSTSFILE%' -Value '127.0.0.1 windowsupdate.microsoft.com';" ^
   "Add-Content -Path '%HOSTSFILE%' -Value '127.0.0.1 download.windowsupdate.com';" ^
@@ -233,13 +269,20 @@ powershell -Command ^
   "Add-Content -Path '%HOSTSFILE%' -Value '127.0.0.1 *.update.microsoft.com';" ^
   "Add-Content -Path '%HOSTSFILE%' -Value '127.0.0.1 *.windowsupdate.com';" ^
   "Add-Content -Path '%HOSTSFILE%' -Value '127.0.0.1 *.download.windowsupdate.com';" ^
-  "Add-Content -Path '%HOSTSFILE%' -Value '127.0.0.1 download.windowsupdate.com';" ^
   "Add-Content -Path '%HOSTSFILE%' -Value '127.0.0.1 download.microsoft.com';" ^
   "Add-Content -Path '%HOSTSFILE%' -Value '127.0.0.1 wustat.windows.com';" ^
   "Add-Content -Path '%HOSTSFILE%' -Value '127.0.0.1 ntservicepack.microsoft.com';" ^
   "Add-Content -Path '%HOSTSFILE%' -Value '127.0.0.1 go.microsoft.com';" ^
   "Add-Content -Path '%HOSTSFILE%' -Value '127.0.0.1 dl.delivery.mp.microsoft.com';" ^
   "Add-Content -Path '%HOSTSFILE%' -Value '127.0.0.1 *.delivery.mp.microsoft.com';"
+
+echo Da them cac ten mien vao Hosts File.
+
+echo.
+echo =================================================================
+echo       QUA TRINH CHAN CAP NHAT HOAN TAT. HAY KHOI DONG LAI MAY
+echo =================================================================
+pause
  ```
 
 Tắt NLA
@@ -292,6 +335,7 @@ winget install --id CoreyButler.NVMforWindows
 winget install --id XPDCFJDKLZJLP8
 
 winget install --id Microsoft.VisualStudioCode
+
 
 
 
