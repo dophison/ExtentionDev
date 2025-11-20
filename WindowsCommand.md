@@ -1,5 +1,5 @@
 
-
+https://www.quicknoteshare.com/r/sqpej5
 
 Xuất feature/role của windows server
 
@@ -355,6 +355,7 @@ Win2012 bỏ option udfver102
 ```
 .\oscdimg.exe -bootdata:2#p0,e,bC:\win2025\boot\etfsboot.com#pEF,e,bC:\win2025\efi\microsoft\boot\efisys.bin -m -o -u2 C:\win2025 C:\windows-server-2025-Datacenter-x64-251106.iso
 ```
+
 
 
 
