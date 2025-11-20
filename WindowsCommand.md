@@ -337,7 +337,24 @@ winget install --id XPDCFJDKLZJLP8
 winget install --id Microsoft.VisualStudioCode
 
 
+# ISO
 
+
+Lấy tên chuẩn
+
+```
+Get-WindowsImage -ImagePath E:\temp\WindowsISO\SOURCES\install.wim
+```
+
+Capture lại thành iso
+```
+dism /Capture-Image /ImageFile:E:\window2012\window2012.wim /CaptureDir:J:\ /Name:"Windows Server 2012 Standard" /Description:"Windows Server 2012 Standard" /Compress:max
+```
+
+Win2012 bỏ option udfver102
+```
+.\oscdimg.exe -bootdata:2#p0,e,bC:\win2025\boot\etfsboot.com#pEF,e,bC:\win2025\efi\microsoft\boot\efisys.bin -m -o -u2 C:\win2025 C:\windows-server-2025-Datacenter-x64-251106.iso
+```
 
 
 
