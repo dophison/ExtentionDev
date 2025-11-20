@@ -285,6 +285,67 @@ echo =================================================================
 pause
  ```
 
+Revert 
+
+
+```
+@echo off
+cls
+
+echo.
+echo =================================================================
+echo         BAT DAU HOAN TAC (REVERT) CHAN CAP NHAT WINDOWS
+echo =================================================================
+echo.
+
+:: 1. HOAN TAC FIREWALL: XOA CAC RULE DA TAO
+echo === 1. Xoa cac quy tac Firewall de khoi phuc ket noi cap nhat ===
+
+echo Xoa quy tac chan TCP Port 80, 443...
+netsh advfirewall firewall delete rule name="Block WU TCP 80_443" >nul 2>&1
+
+echo Xoa quy tac chan UDP Port 443...
+netsh advfirewall firewall delete rule name="Block WU UDP 443" >nul 2>&1
+
+echo Xoa quy tac chan TCP Port 7680 (Delivery Optimization)...
+netsh advfirewall firewall delete rule name="Block Delivery Optimization TCP 7680" >nul 2>&1
+
+echo Da xoa cac quy tac chan ket noi thanh cong.
+echo.
+
+:: 2. HOAN TAC REGISTRY VA DICH VU
+echo === 2. Dat lai Registry va cac Dich vu ve trang thai Tu dong (Automatic) ===
+
+:: Dat lai WUAUSERV ve Automatic (va bat dau dich vu)
+echo Dat lai dich vu wuauserv ve Automatic...
+sc config wuauserv start= auto
+sc start wuauserv >nul 2>&1
+echo Dat lai Registry AUOptions ve mac dinh (3 - Auto download and notify for install)...
+reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsUpdate\Auto Update" /v AUOptions /t REG_DWORD /d 3 /f
+
+:: Dat lai DOSVC ve Automatic (va bat dau dich vu)
+echo Dat lai dich vu DoSvc ve Automatic...
+sc config DoSvc start= auto
+sc start DoSvc >nul 2>&1
+
+:: Dat lai USOSVC ve Automatic (va bat dau dich vu)
+echo Dat lai dich vu UsoSvc ve Automatic...
+sc config UsoSvc start= auto
+sc start UsoSvc >nul 2>&1
+
+echo Cac dich vu cap nhat da duoc khoi phuc ve Automatic.
+echo.
+
+echo =================================================================
+echo        QUAN TRINH HOAN TAC DA HOAN TAT. HAY KHOI DONG LAI MAY CHU DE DAM BAO.
+echo =================================================================
+pause
+
+```
+
+
+
+
 Tắt NLA
 ```
 $rdp = Get-WmiObject -class "Win32_TSGeneralSetting" -Namespace root\cimv2\terminalservices -Filter "TerminalName='RDP-tcp'"
@@ -355,6 +416,7 @@ Win2012 bỏ option udfver102
 ```
 .\oscdimg.exe -bootdata:2#p0,e,bC:\win2025\boot\etfsboot.com#pEF,e,bC:\win2025\efi\microsoft\boot\efisys.bin -m -o -u2 C:\win2025 C:\windows-server-2025-Datacenter-x64-251106.iso
 ```
+
 
 
 
