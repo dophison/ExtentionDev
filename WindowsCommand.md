@@ -431,6 +431,7 @@ Win2012 bỏ option udfver102
 
 
 
+Link gpu: https://us.download.nvidia.com/Windows/Quadro_Certified/512.15/512.15-quadro-rtx-desktop-notebook-win10-win11-64bit-international-dch-whql.exe
 
 
 
