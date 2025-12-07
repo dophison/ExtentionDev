@@ -253,30 +253,88 @@ REG ADD "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\UsoSvc" /v Start /
 
 echo Cac dich vu cap nhat da bi vo hieu hoa.
 
-:: 3. CHAN BANG TEP HOSTS
-echo.
-echo === 3. Chan cac ten mien cap nhat bang cach them vao Hosts File ===
+set RegKey_Main="HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate"
+set RegKey_AU="HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU"
+
+:: Thong tin WSUS Server (Thay the neu can)
+set WSUS_SERVER="localserver.localdomain.wsus"
+set WSUS_ALT="wsus.localdomain.localserver"
+
+ECHO ==========================================================
+ECHO BAT DAU CAU HINH WINDOWS UPDATE (WSUS)
+ECHO ==========================================================
+
+:: 1. DAM BAO CAC KEY CHINH TON TAI
+REG ADD %RegKey_Main% /f
+REG ADD %RegKey_AU% /f
+
+ECHO.
+ECHO A. CAU HINH CAC KHOA CHINH (WindowsUpdate)
+
+:: Vung 1: Gia tri String (Dia chi Server)
+REG ADD %RegKey_Main% /v WUServer /t REG_SZ /d %WSUS_SERVER% /f
+REG ADD %RegKey_Main% /v WUStatusServer /t REG_SZ /d %WSUS_SERVER% /f
+REG ADD %RegKey_Main% /v UpdateServiceUrlAlternate /t REG_SZ /d %WSUS_ALT% /f
+ECHO [OK] Da thiet lap dia chi WSUS Server.
+
+:: Vung 2: Gia tri DWORD (Disable Features)
+REG ADD %RegKey_Main% /v DisableOSUpgrade /t REG_DWORD /d 1 /f
+REG ADD %RegKey_Main% /v DisableWindowsUpdateAccess /t REG_DWORD /d 1 /f
+REG ADD %RegKey_Main% /v DoNotConnectToWindowsUpdateInternetLocations /t REG_DWORD /d 1 /f
+ECHO [OK] Da tat Upgrade va truy cap Internet.
+
+ECHO.
+ECHO B. CAU HINH KHOA TU DONG CAP NHAT (AU)
+
+:: 1. NoAutoUpdate (DWORD = 1) - Tat tu dong cap nhat
+REG ADD %RegKey_AU% /v NoAutoUpdate /t REG_DWORD /d 1 /f
+ECHO [OK] NoAutoUpdate = 1 (Tat tu dong cap nhat)
+
+:: 2. UseWUServer (DWORD = 1) - Bat su dung WSUS
+REG ADD %RegKey_AU% /v UseWUServer /t REG_DWORD /d 1 /f
+ECHO [OK] UseWUServer = 1 (Bat WSUS)
+
+ECHO.
+ECHO ==========================================================
+ECHO HOAN TAT CAU HINH. BUOC TIEP THEO LA AP DUNG POLICY.
+ECHO ==========================================================
+
+:: Ap dung thay doi ngay lap tuc
+GPUPDATE /FORCE
+
+
+ECHO ==========================================================
+ECHO BAT DAU CAU HINH CHAN BANG TEP HOSTS
+ECHO ==========================================================
 
 set HOSTSFILE=%SystemRoot%\System32\drivers\etc\hosts
-echo Xoa thuoc tinh Read-Only (attrib -r) cua Hosts File...
-attrib -r "%HOSTSFILE%"
+set IP_BLOCK=127.0.0.1
 
-echo Dang them cac ten mien Microsoft Update vao Hosts File...
-powershell -Command ^
-  "Add-Content -Path '%HOSTSFILE%' -Value '127.0.0.1 windowsupdate.microsoft.com';" ^
-  "Add-Content -Path '%HOSTSFILE%' -Value '127.0.0.1 download.windowsupdate.com';" ^
-  "Add-Content -Path '%HOSTSFILE%' -Value '127.0.0.1 *.windowsupdate.microsoft.com';" ^
-  "Add-Content -Path '%HOSTSFILE%' -Value '127.0.0.1 *.update.microsoft.com';" ^
-  "Add-Content -Path '%HOSTSFILE%' -Value '127.0.0.1 *.windowsupdate.com';" ^
-  "Add-Content -Path '%HOSTSFILE%' -Value '127.0.0.1 *.download.windowsupdate.com';" ^
-  "Add-Content -Path '%HOSTSFILE%' -Value '127.0.0.1 download.microsoft.com';" ^
-  "Add-Content -Path '%HOSTSFILE%' -Value '127.0.0.1 wustat.windows.com';" ^
-  "Add-Content -Path '%HOSTSFILE%' -Value '127.0.0.1 ntservicepack.microsoft.com';" ^
-  "Add-Content -Path '%HOSTSFILE%' -Value '127.0.0.1 go.microsoft.com';" ^
-  "Add-Content -Path '%HOSTSFILE%' -Value '127.0.0.1 dl.delivery.mp.microsoft.com';" ^
-  "Add-Content -Path '%HOSTSFILE%' -Value '127.0.0.1 *.delivery.mp.microsoft.com';"
+ECHO ==========================================================
+ECHO BAT DAU THEM TEN MIEN MICROSOFT UPDATE VAO HOSTS FILE
+ECHO ==========================================================
 
-echo Da them cac ten mien vao Hosts File.
+ECHO. >> %HOSTSFILE%
+ECHO # START BLOCK WINDOWS UPDATE >> %HOSTSFILE%
+
+ECHO %IP_BLOCK% windowsupdate.microsoft.com >> %HOSTSFILE%
+ECHO %IP_BLOCK% download.windowsupdate.com >> %HOSTSFILE%
+ECHO %IP_BLOCK% *.windowsupdate.microsoft.com >> %HOSTSFILE%
+ECHO %IP_BLOCK% *.update.microsoft.com >> %HOSTSFILE%
+ECHO %IP_BLOCK% *.windowsupdate.com >> %HOSTSFILE%
+ECHO %IP_BLOCK% *.download.windowsupdate.com >> %HOSTSFILE%
+ECHO %IP_BLOCK% download.microsoft.com >> %HOSTSFILE%
+ECHO %IP_BLOCK% wustat.windows.com >> %HOSTSFILE%
+ECHO %IP_BLOCK% ntservicepack.microsoft.com >> %HOSTSFILE%
+ECHO %IP_BLOCK% go.microsoft.com >> %HOSTSFILE%
+ECHO %IP_BLOCK% dl.delivery.mp.microsoft.com >> %HOSTSFILE%
+ECHO %IP_BLOCK% *.delivery.mp.microsoft.com >> %HOSTSFILE%
+
+ECHO # END BLOCK WINDOWS UPDATE >> %HOSTSFILE%
+
+ECHO.
+ECHO Da them cac ten mien vao Hosts File.
+ECHO Vui long kiem tra %HOSTSFILE%
 
 echo.
 echo =================================================================
@@ -432,6 +490,7 @@ Win2012 bỏ option udfver102
 
 
 Link gpu: https://us.download.nvidia.com/Windows/Quadro_Certified/512.15/512.15-quadro-rtx-desktop-notebook-win10-win11-64bit-international-dch-whql.exe
+
 
 
 
