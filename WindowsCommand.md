@@ -440,6 +440,7 @@ reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsUpd
 
 :: Dat lai DOSVC ve Automatic (va bat dau dich vu)
 echo Dat lai dich vu DoSvc ve Automatic...
+REG ADD "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\DoSvc" /v Start /t REG_DWORD /d 2 /f
 sc config DoSvc start= auto
 sc start DoSvc >nul 2>&1
 
@@ -450,6 +451,47 @@ sc start UsoSvc >nul 2>&1
 
 echo Cac dich vu cap nhat da duoc khoi phuc ve Automatic.
 echo.
+
+set RegKey_Main="HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate"
+set RegKey_AU="HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU"
+
+ECHO ==========================================================
+ECHO BAT DAU KHOI PHUC CAU HINH WINDOWS UPDATE (WSUS)
+ECHO ==========================================================
+
+ECHO.
+ECHO A. XOA CAC GIA TRI KHOI KHOA CHINH (WindowsUpdate)
+
+:: Xoa gia tri String (Dia chi Server)
+REG DELETE %RegKey_Main% /v WUServer /f
+REG DELETE %RegKey_Main% /v WUStatusServer /f
+REG DELETE %RegKey_Main% /v UpdateServiceUrlAlternate /f
+ECHO [OK] Da xoa dia chi WSUS Server.
+
+:: Xoa gia tri DWORD (Disable Features)
+REG DELETE %RegKey_Main% /v DisableOSUpgrade /f
+REG DELETE %RegKey_Main% /v DisableWindowsUpdateAccess /f
+REG DELETE %RegKey_Main% /v DoNotConnectToWindowsUpdateInternetLocations /f
+ECHO [OK] Da xoa cac lenh Disable.
+
+ECHO.
+ECHO B. XOA CAC GIA TRI KHOI KHOA TU DONG CAP NHAT (AU)
+
+:: Xoa gia tri NoAutoUpdate (DWORD)
+REG DELETE %RegKey_AU% /v NoAutoUpdate /f
+ECHO [OK] Da xoa NoAutoUpdate.
+
+:: Xoa gia tri UseWUServer (DWORD)
+REG DELETE %RegKey_AU% /v UseWUServer /f
+ECHO [OK] Da xoa UseWUServer.
+
+ECHO.
+ECHO ==========================================================
+ECHO KHOI PHUC HOAN TAT. AP DUNG POLICY.
+ECHO ==========================================================
+
+:: Ap dung thay doi ngay lap tuc
+GPUPDATE /FORCE
 
 echo =================================================================
 echo        QUAN TRINH HOAN TAC DA HOAN TAT. HAY KHOI DONG LAI MAY CHU DE DAM BAO.
@@ -552,6 +594,7 @@ Win2012 bỏ option udfver102
 
 
 Link gpu: https://us.download.nvidia.com/Windows/Quadro_Certified/512.15/512.15-quadro-rtx-desktop-notebook-win10-win11-64bit-international-dch-whql.exe
+
 
 
 
