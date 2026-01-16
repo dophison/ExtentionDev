@@ -13,7 +13,7 @@ Xuất feature/role của windows 10/11
 Get-WindowsOptionalFeature -Online | Where-Object { $_.State -eq 'Enabled' } | Select-Object FeatureName, State
 ```
 
-
+Windows 10 vào check typing regedit, navigating to HKEY_LOCAL_MACHINE\SYSTEM\Setup\Status\ChildCompletion, and changing setup.exe's value to 3, then restarting.
 
 ```
 Get-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services'
@@ -67,7 +67,13 @@ tzutil /s  "SE Asia Standard Time"
 ```
 
 
+Kiểm tra fstrim có đang chạy không
 
+```
+fsutil behavior query DisableDeleteNotify
+```
+
+Lệnh kiểm tra xem có bật hay tắt (0 là bật, 1 là tắt)
 
 
 Dọn dẹp image update
@@ -76,6 +82,11 @@ Dọn dẹp image update
 ```
 Dism.exe /online /Cleanup-Image /StartComponentCleanup /ResetBase
 ```
+
+
+
+
+
 
 
 Cloudbase-init
@@ -644,6 +655,7 @@ Win2012 bỏ option udfver102
 
 
 Link gpu: https://us.download.nvidia.com/Windows/Quadro_Certified/512.15/512.15-quadro-rtx-desktop-notebook-win10-win11-64bit-international-dch-whql.exe
+
 
 
 
