@@ -1,4 +1,5 @@
 
+
 https://www.quicknoteshare.com/r/sqpej5
 
 
@@ -589,6 +590,160 @@ $Pagefile.MaximumSize = 1024
 $Pagefile.Put()
 ```
 
+Dùng custom resize disk 
+```
+# 1. Setup Directory
+$scriptPath = "C:\Scripts"
+if (!(Test-Path $scriptPath)) { New-Item -Path $scriptPath -ItemType Directory -Force }
+
+
+# 2. Create the Execution Script
+$scriptContent = @'
+$logFile = "C:\Scripts\ResizeLog.txt"
+
+
+# Function to write logs exactly as shown in your reference image
+function Write-Log($message) {
+    $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+    "[$timestamp] $message" | Out-File $logFile -Append
+}
+
+
+# Maintenance: Clear log if it exceeds 5MB to keep it clean
+if ((Test-Path $logFile) -and ((Get-Item $logFile).Length -gt 5MB)) {
+    Clear-Content $logFile
+    Write-Log "Log file cleared due to size limit."
+}
+
+
+Write-Log "------------------------------------------------------------"
+Write-Log "SESSION START: AUTOMATIC DISK EXTENSION"
+
+
+try {
+    # 0. Get OS Info
+    $osInfo = Get-WmiObject -Class Win32_OperatingSystem
+    Write-Log "OS Name: $($osInfo.Caption)"
+    Write-Log "OS Version: Microsoft Windows NT $($osInfo.Version)"
+
+
+    # 1. Verify Virtual Disk Service (VDS)
+    Write-Log "Checking Virtual Disk Service (VDS) status..."
+    $vdsSvc = Get-Service -Name vds -ErrorAction SilentlyContinue
+    if ($vdsSvc -and $vdsSvc.Status -ne 'Running') {
+        Write-Log "VDS is not running. Attempting to start service..."
+        Start-Service -Name vds
+        Start-Sleep -s 3
+    }
+    Write-Log "VDS Service is active."
+
+
+    # 2. Rescan Storage
+    Write-Log "Scanning for hardware changes..."
+    "rescan" | diskpart | Out-Null
+    Write-Log "Storage rescan completed."
+
+
+    # 3. Analyze Drive C
+    $partitionC = Get-WmiObject -Query "ASSOCIATORS OF {Win32_LogicalDisk.DeviceID='C:'} WHERE AssocClass=Win32_LogicalDiskToPartition"
+    $diskDrive = Get-WmiObject -Query "ASSOCIATORS OF {Win32_DiskPartition.DeviceID='$($partitionC.DeviceID)'} WHERE AssocClass=Win32_DiskDriveToDiskPartition"
+    
+    $diskIndex = $diskDrive.Index
+    $cPartNumber = $partitionC.Index + 1
+    $currentSizeGB = [Math]::Round((Get-WmiObject Win32_LogicalDisk -Filter "DeviceID='C:'").Size/1GB, 4)
+    
+    Write-Log "Drive C identified: Disk #$diskIndex, Partition #$cPartNumber"
+    Write-Log "Current Partition Size: $currentSizeGB GB"
+
+
+    # 4. Check for Blocking Recovery Partition
+    Write-Log "Checking for blocking Recovery partitions on Disk #$diskIndex..."
+    $allPartsOnDisk = Get-WmiObject -Class Win32_DiskPartition | Where-Object { $_.DiskIndex -eq $diskIndex }
+    
+    # Logic: Find partition that is AFTER Drive C and is a Recovery/Hidden type
+    $blockingPart = $allPartsOnDisk | Where-Object {
+        ($_.Index + 1) -gt $cPartNumber -and 
+        ($_.Type -like "*Recovery*" -or $_.Type -like "*Hidden*" -or $_.PartitionType -eq 12)
+    }
+
+
+    if ($blockingPart) {
+        $partToDel = $blockingPart.Index + 1
+        Write-Log "CRITICAL: Found Recovery Partition #$partToDel blocking Drive C."
+        Write-Log "Executing Diskpart override deletion..."
+        $dpDelete = @"
+select disk $diskIndex
+select partition $partToDel
+delete partition override
+"@ | diskpart
+        Write-Log "Diskpart Output: $($dpDelete -join ' ')"
+    } else {
+        Write-Log "No blocking partitions found. Path to unallocated space is clear."
+    }
+
+
+    # 5. Calculate and Execute Resize
+    # For modern OS, we use Resize-Partition for better logging if available
+    $canUseModernResize = Get-Command Resize-Partition -ErrorAction SilentlyContinue
+    
+    if ($canUseModernResize) {
+        $supportedSize = Get-PartitionSupportedSize -DriveLetter C
+        $sizeMax = $supportedSize.SizeMax
+        Write-Log "Calculated Max Possible Size: $([Math]::Round($sizeMax/1GB, 4)) GB"
+        
+        if ($sizeMax -gt (Get-Partition -DriveLetter C).Size) {
+            Write-Log "Applying Resize-Partition command..."
+            Resize-Partition -DriveLetter C -Size $sizeMax
+        }
+    } else {
+        # Legacy OS (2008) uses Diskpart Extend
+        Write-Log "Applying Diskpart Extend command (Legacy Mode)..."
+        "select disk $diskIndex`nselect volume C`nextend" | diskpart | Out-Null
+    }
+
+
+    # 6. Success Verification
+    $finalSizeGB = [Math]::Round((Get-WmiObject Win32_LogicalDisk -Filter "DeviceID='C:'").Size/1GB, 4)
+    if ($finalSizeGB -gt $currentSizeGB) {
+        Write-Log "SUCCESS: Partition extended from $currentSizeGB GB to $finalSizeGB GB."
+    } else {
+        Write-Log "SESSION ENDED: No expansion was performed (Already at max size)."
+    }
+
+
+} catch {
+    Write-Log "ERROR ENCOUNTERED: $($_.Exception.Message)"
+}
+
+
+Write-Log "SESSION ENDED."
+Write-Log "------------------------------------------------------------"
+'@
+
+
+# Save Script File
+$scriptContent | Out-File -FilePath "C:\Scripts\ExtendDisk.ps1" -Encoding utf8 -Force
+
+
+# 3. Finalize Setup
+Set-ExecutionPolicy Unrestricted -Force
+
+
+# Register Task using schtasks for 100% compatibility
+$taskName = "AutoResizeDisk"
+$taskCmd = "powershell.exe -NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -File C:\Scripts\ExtendDisk.ps1"
+
+
+schtasks /delete /tn $taskName /f 2>$null
+schtasks /create /tn $taskName /tr "$taskCmd" /sc onstart /rl highest /ru System /f
+
+
+Write-Host "`n[SUCCESS] Setup complete. Logs will look exactly like your reference image." -ForegroundColor Green
+Write-Host "[INFO] Path: C:\Scripts\ResizeLog.txt" -ForegroundColor Cyan
+
+```
+
+
 
 
 - Xóa event log 
@@ -662,6 +817,7 @@ Win2012 bỏ option udfver102
 
 
 Link gpu: https://us.download.nvidia.com/Windows/Quadro_Certified/512.15/512.15-quadro-rtx-desktop-notebook-win10-win11-64bit-international-dch-whql.exe
+
 
 
 
