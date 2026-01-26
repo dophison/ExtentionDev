@@ -1,11 +1,21 @@
 
 https://www.quicknoteshare.com/r/sqpej5
 
+
+
+Giữ bản update 21H2
+```
+reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate" /v TargetReleaseVersion /t REG_DWORD /d 1 /f ^ && reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate" /v TargetReleaseVersionInfo /t REG_SZ /d 21H2 /f ^ && reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate" /v ProductVersion /t REG_SZ /d "Windows 10" /f
+```
+
+
+
 Xuất feature/role của windows server
 
 ```
 Get-WindowsFeature | Where-Object { $_.Installed -eq $True } | Sort-Object Name | Format-Table Name, DisplayName, Installed -AutoSize
 ```
+
 
 
 Xuất feature/role của windows 10/11
@@ -82,9 +92,6 @@ Dọn dẹp image update
 ```
 Dism.exe /online /Cleanup-Image /StartComponentCleanup /ResetBase
 ```
-
-
-
 
 
 
@@ -655,6 +662,7 @@ Win2012 bỏ option udfver102
 
 
 Link gpu: https://us.download.nvidia.com/Windows/Quadro_Certified/512.15/512.15-quadro-rtx-desktop-notebook-win10-win11-64bit-international-dch-whql.exe
+
 
 
 
