@@ -124,9 +124,9 @@ username=Administrator
 groups=Administrators
 inject_user_password=true
 first_logon_behaviour=no
-raw_hhd=true
-cdrom=true
-vfat=true
+config_drive_raw_hhd=true
+config_drive_cdrom=true
+config_drive_vfat=true
 bsdtar_path=C:\Program Files\Cloudbase Solutions\Cloudbase-Init\bin\bsdtar.exe
 mtools_path=C:\Program Files\Cloudbase Solutions\Cloudbase-Init\bin\
 locations=cdrom
@@ -152,9 +152,9 @@ username=Administrator
 groups=Administrators
 inject_user_password=true
 first_logon_behaviour=no
-raw_hhd=true
-cdrom=true
-vfat=true
+config_drive_raw_hhd=true
+config_drive_cdrom=true
+config_drive_vfat=true
 bsdtar_path=C:\Program Files\Cloudbase Solutions\Cloudbase-Init\bin\bsdtar.exe
 mtools_path=C:\Program Files\Cloudbase Solutions\Cloudbase-Init\bin\
 locations=cdrom
@@ -668,6 +668,7 @@ Win2012 bỏ option udfver102
 
 
 Link gpu: https://us.download.nvidia.com/Windows/Quadro_Certified/512.15/512.15-quadro-rtx-desktop-notebook-win10-win11-64bit-international-dch-whql.exe
+
 
 
 
