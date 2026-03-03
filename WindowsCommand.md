@@ -608,6 +608,7 @@ wevtutil cl "Microsoft-Windows-TerminalServices-LocalSessionManager/Operational"
 ```
 Clear-Content -Path "C:\Program Files\Cloudbase Solutions\Cloudbase-Init\log\cloudbase-init.log"
 Clear-Content -Path "C:\Program Files\Cloudbase Solutions\Cloudbase-Init\log\cloudbase-init-unattend.log"
+Clear-Content -Path "C:\Scripts\ResizeLog.txt"
 ```
 Còn 1 file nữa gặp điền vào.
 
@@ -668,6 +669,7 @@ Win2012 bỏ option udfver102
 
 
 Link gpu: https://us.download.nvidia.com/Windows/Quadro_Certified/512.15/512.15-quadro-rtx-desktop-notebook-win10-win11-64bit-international-dch-whql.exe
+
 
 
 
